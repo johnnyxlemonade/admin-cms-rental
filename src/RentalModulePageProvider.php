@@ -20,6 +20,7 @@ use Lemonade\Admin\Page\Contract\ModuleEditorPageProviderInterface;
 use Lemonade\Admin\Page\Contract\ModuleIndexPageProviderInterface;
 use Lemonade\Admin\Page\ModulePage;
 use Lemonade\Admin\Presentation\AdminFileUploadComponent;
+use Lemonade\Cms\CmsPublicationState;
 use Lemonade\Cms\Content\CmsContentReadModel;
 use Lemonade\Cms\Rental\DataGrid\RentalDataGrid;
 use Lemonade\Cms\Rental\Editor\RentalAdminEditorDefinitionFactory;
@@ -199,7 +200,8 @@ final readonly class RentalModulePageProvider implements ModuleIndexPageProvider
                         'page_title' => (string) ($translation['page_title'] ?? ''),
                         'meta_description' => (string) ($translation['meta_description'] ?? ''),
                         'url_segment' => $canonicalPath === '' ? '' : basename($canonicalPath),
-                        'publication_state' => (string) ($translation['publication_state'] ?? 0),
+                        ...\Lemonade\Admin\Cms\Content\CmsDisplaySettings::values($article),
+                        'publication_state' => CmsPublicationState::from((int) ($translation['publication_state'] ?? CmsPublicationState::New->value))->editorValue(),
                         'published_at' => (string) ($translation['published_at'] ?? ''),
                         'created_by_name' => (string) ($article['created_by_name'] ?? '—'),
                         'created_at' => (string) ($article['created_at'] ?? ''),

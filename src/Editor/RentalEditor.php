@@ -6,6 +6,7 @@ namespace Lemonade\Cms\Rental\Editor;
 
 use DomainException;
 use Lemonade\Admin\Authorization\AuthorizationService;
+use Lemonade\Admin\Cms\Content\CmsDisplaySettings;
 use Lemonade\Admin\Editor\Contract\EditorAccessPolicyInterface;
 use Lemonade\Admin\Editor\Contract\EditorFieldAccessPolicyInterface;
 use Lemonade\Admin\Editor\Contract\EditorProviderInterface;
@@ -61,6 +62,7 @@ final readonly class RentalEditor implements
                 new EditorFieldDefinition(name: 'publication_state', type: 'text', readOnly: false, permission: 'cms.rental.publish_own'),
                 new EditorFieldDefinition(name: 'published_at', type: 'text', readOnly: false, permission: 'cms.rental.publish_own'),
                 new EditorFieldDefinition(name: 'author_name', type: 'text', readOnly: false, permission: null),
+                ...CmsDisplaySettings::fields(),
                 new EditorFieldDefinition(name: 'location', type: 'text', readOnly: false, permission: null),
                 new EditorFieldDefinition(name: 'monthly_rent', type: 'text', readOnly: false, permission: null),
                 new EditorFieldDefinition(name: 'available_from', type: 'text', readOnly: false, permission: null),
@@ -141,6 +143,7 @@ final readonly class RentalEditor implements
             'article' => [
                 'id' => null,
                 'author_name' => null,
+                ...\Lemonade\Cms\Content\CmsContentInput::DISPLAY_DEFAULTS,
                 'translations' => [],
             ],
             'locales' => $locales,

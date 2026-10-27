@@ -51,7 +51,7 @@ final class CreateRentalArticlesTest extends TestCase
         self::assertStringContainsString('`offer_state`', $root);
         self::assertStringContainsString('`location`', $statements['cms_rental_translation']);
         self::assertStringNotContainsString('`location`', $root);
-        self::assertStringNotContainsString('`show_reading_time`', $root);
+        self::assertStringContainsString('`show_reading_time`', $root);
         foreach (['created_by', 'updated_by', 'deleted_by', 'owner_id'] as $column) {
             self::assertStringContainsString(sprintf('`%s` BIGINT UNSIGNED NULL', $column), $root);
         }
