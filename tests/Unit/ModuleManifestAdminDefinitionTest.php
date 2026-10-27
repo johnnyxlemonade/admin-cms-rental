@@ -94,7 +94,7 @@ final class ModuleManifestAdminDefinitionTest extends TestCase
 
         self::assertNotNull($module);
         self::assertSame('rental.module.name', $module->nameKey());
-        self::assertSame(AdminIcon::JournalText, $module->icon());
+        self::assertSame(AdminIcon::Building, $module->icon());
         self::assertNotNull($event);
         self::assertSame('rental.audit.events.published', $event->translationKey());
         self::assertSame(AdminIcon::CheckCircle, $event->icon());
