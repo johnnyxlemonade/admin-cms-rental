@@ -85,16 +85,20 @@ final class RentalDataGridTest extends TestCase
     {
         $row = array_replace($this->articleRow(7, 'cs', 'Rental', CmsPublicationState::Draft), [
             'location' => 'Praha',
-            'monthly_rent' => '125000.50',
+            'monthly_rent' => 'Cena dohodou',
             'available_from' => '2026-11-02',
             'offer_state' => 'available',
         ]);
         $item = $this->grid([$row])->execute($this->query('cs'))->items()[0]->toArray();
 
         self::assertSame('Praha', $item['cells']['location']);
-        self::assertSame('125000.50 CZK', $item['cells']['monthlyRent']);
-        self::assertSame('2026-11-02', $item['cells']['availableFrom']);
-        self::assertSame('rental.states.available', $item['cells']['offerState']);
+        self::assertSame('Cena dohodou', $item['cells']['monthlyRent']);
+        self::assertSame('02. 11. 2026', $item['cells']['availableFrom']);
+        self::assertSame('rental.states.available', $this->cellValue($item, 'offerState'));
+        $offerState = $item['cells']['offerState'];
+        self::assertIsArray($offerState);
+        self::assertIsArray($offerState[0]);
+        self::assertSame('status-success', $offerState[0]['class'] ?? null);
         self::assertSame('admin.status.draft', $this->cellValue($item, 'state'));
     }
 
@@ -147,9 +151,9 @@ final class RentalDataGridTest extends TestCase
 
         $row = $grid->execute($this->query('cs', 'deleted'))->items()[0]->toArray();
 
-        self::assertSame(['value' => '2026-10-20 08:00:00', 'secondary' => 'Creator'], $this->stackedCell($row, 'createdAt'));
-        self::assertSame(['value' => '2026-10-21 09:00:00', 'secondary' => 'Editor'], $this->stackedCell($row, 'updatedAt'));
-        self::assertSame(['value' => '2026-10-22 10:00:00', 'secondary' => 'Deleter'], $this->stackedCell($row, 'deletedAt'));
+        self::assertSame(['value' => '20. 10. 2026 08:00', 'secondary' => 'Creator'], $this->stackedCell($row, 'createdAt'));
+        self::assertSame(['value' => '21. 10. 2026 09:00', 'secondary' => 'Editor'], $this->stackedCell($row, 'updatedAt'));
+        self::assertSame(['value' => '22. 10. 2026 10:00', 'secondary' => 'Deleter'], $this->stackedCell($row, 'deletedAt'));
     }
 
     /**
@@ -169,7 +173,7 @@ final class RentalDataGridTest extends TestCase
 
         $row = $grid->execute($this->query('cs'))->items()[0]->toArray();
 
-        self::assertSame(['value' => '2026-10-22 11:00:00', 'secondary' => 'Restorer'], $this->stackedCell($row, 'updatedAt'));
+        self::assertSame(['value' => '22. 10. 2026 11:00', 'secondary' => 'Restorer'], $this->stackedCell($row, 'updatedAt'));
         self::assertSame(['value' => '—', 'secondary' => '—'], $this->stackedCell($row, 'deletedAt'));
     }
 

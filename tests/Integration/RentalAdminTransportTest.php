@@ -68,6 +68,7 @@ use Lemonade\Framework\Database\Driver\Mysql\MysqlDatabaseDriver;
 use Lemonade\Framework\Database\Driver\Mysql\MysqlIdentifierEscaper;
 use Lemonade\Framework\Database\Driver\Mysql\MysqlSchemaGrammar;
 use Lemonade\Framework\Database\Driver\Mysql\MysqlSqlEscaper;
+use Lemonade\Framework\Database\Instrumentation\Internal\DatabaseInstrumentation;
 use Lemonade\Framework\Database\Schema\Schema;
 use Lemonade\Framework\Database\Schema\SchemaCompiler;
 use Lemonade\Framework\Database\Sql\IdentifierProtector;
@@ -80,7 +81,6 @@ use Lemonade\Framework\Image\Value\ImageVariantDefinition;
 use Lemonade\Framework\Localization\Config\LocalizationConfig;
 use Lemonade\Framework\Localization\Config\LocalizationUrlConfig;
 use Lemonade\Framework\Localization\TranslatorInterface;
-use Lemonade\Framework\Observability\Benchmark\Benchmark;
 use Lemonade\Framework\Routing\ControllerAction;
 use Lemonade\Framework\Routing\Router;
 use Lemonade\Framework\Routing\UrlGenerator;
@@ -110,7 +110,7 @@ final class RentalAdminTransportTest extends TestCase
         self::assertIsString($name);
         self::assertStringStartsWith('cms_rental_test_', $name);
         $config = DatabaseConfig::fromArray(['driver' => 'mysql', 'host' => 'db', 'database' => $name, 'username' => 'db', 'password' => 'db']);
-        $connection = new MysqlConnection($config, new Benchmark());
+        $connection = new MysqlConnection($config, new DatabaseInstrumentation());
         $escaper = new MysqlIdentifierEscaper('');
         $driver = new MysqlDatabaseDriver($connection, $config, $escaper, new IdentifierProtector($escaper));
         $db = new Database($connection, $driver);
@@ -211,7 +211,7 @@ final class RentalAdminTransportTest extends TestCase
         $created = $transport->dispatch('rental', null, ['action' => 'create', 'payload' => []]);
         self::assertTrue($created->successful());
         $id = $created->data()['id'];
-        $domain = ['monthly_rent' => '1234567890123.50', 'available_from' => '2028-02-29', 'offer_state' => 'available', 'external_url' => 'https://example.test/rental'];
+        $domain = ['monthly_rent' => '13 000 Kč', 'available_from' => '2028-02-29', 'offer_state' => 'available', 'external_url' => 'https://example.test/rental'];
         $payload = $domain + ['locale' => 'cs', 'title' => 'První zpráva', 'location' => 'Praha', 'page_title' => 'SEO title', 'meta_description' => 'SEO description', 'tags' => 'Praha, Brno, Praha', 'publication_state' => '2', 'published_at' => '2027-01-22T12:30'];
         $defaults = $db->table('cms_rental')->where('id', $id)->first() ?? [];
         foreach (\Lemonade\Cms\Content\CmsContentInput::DISPLAY_DEFAULTS as $column => $default) {
@@ -235,7 +235,7 @@ final class RentalAdminTransportTest extends TestCase
         foreach (['show_author', 'sharing_enabled', 'show_published_at', 'show_thumbnail', 'show_reading_time', 'show_tags'] as $column) {
             self::assertSame(0, (int) ($root[$column] ?? -1));
         }
-        self::assertSame('1234567890123.50', $root['monthly_rent'] ?? null);
+        self::assertSame('13 000 Kč', $root['monthly_rent'] ?? null);
         self::assertSame('CZK', $root['currency'] ?? null);
         self::assertSame('2028-02-29', $root['available_from'] ?? null);
         self::assertSame('available', $root['offer_state'] ?? null);
@@ -429,7 +429,7 @@ final class RentalAdminTransportTest extends TestCase
         $reader = $scope->get('cms.rental.read');
         /** @var CmsContentDataGrid $grid */
         $grid = $scope->get('cms.rental.grid_query');
-        $domain = RentalData::fromEditor(['author_name' => 'Domain Author', 'monthly_rent' => '1234567890123.50', 'currency' => 'CZK', 'available_from' => '2028-03-04', 'offer_state' => 'available', 'external_url' => 'https://example.test/domain', 'location' => 'Ostrava']);
+        $domain = RentalData::fromEditor(['author_name' => 'Domain Author', 'monthly_rent' => 'Cena dohodou', 'currency' => 'CZK', 'available_from' => '2028-03-04', 'offer_state' => 'available', 'external_url' => 'https://example.test/domain', 'location' => 'Ostrava']);
         $first = $lifecycle->createDraft(7, 'cs');
         $second = $lifecycle->createDraft(9, 'cs');
         $deleted = $lifecycle->createDraft(7, 'cs');
@@ -487,7 +487,7 @@ final class RentalAdminTransportTest extends TestCase
         self::assertSame('Description Alpha', $translations['cs']['meta_description']);
         self::assertSame('read-fixture-canonical', $translations['cs']['canonical_path']);
         self::assertNull($translations['de']['canonical_path']);
-        self::assertSame('1234567890123.50', $article['monthly_rent']);
+        self::assertSame('Cena dohodou', $article['monthly_rent']);
         self::assertSame('CZK', $article['currency']);
         self::assertSame('2028-03-04', $article['available_from']);
         self::assertSame('available', $article['offer_state']);

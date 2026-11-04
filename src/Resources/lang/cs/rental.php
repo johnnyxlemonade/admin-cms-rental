@@ -31,15 +31,21 @@ return [
 
     'fields' => [
         'location' => 'Lokalita',
-        'monthly_rent' => 'Měsíční nájemné (CZK)',
+        'location_help' => 'Místo, kde se nabízená nemovitost nachází.',
+        'monthly_rent' => 'Měsíční nájemné',
+        'monthly_rent_help' => 'Cena nebo textová informace zobrazovaná u nabídky.',
         'available_from' => 'K dispozici od',
+        'available_from_help' => 'Datum, od kterého je nemovitost dostupná.',
         'offer_state' => 'Stav nabídky pronájmu',
+        'offer_state_help' => 'Aktuální stav pronájmu. Neovlivňuje jeho zveřejnění.',
         'external_url' => 'Odkaz na nabídku',
+        'external_url_help' => 'Odkaz na další informace nebo externí nabídku pronájmu.',
         'title' => 'Název nabídky',
         'author_name' => 'Autor',
         'tags' => 'Štítky',
-        'tags_help' => 'Vyberte existující štítek nebo zadejte nový.',
+        'tags_help' => 'Slouží k označení a filtrování nabídek pronájmu. Vyberte existující štítek nebo zadejte nový.',
         'summary' => 'Úvodní text',
+        'summary_help' => 'Krátké shrnutí používané ve veřejné prezentaci.',
         'content' => 'Obsah',
         'thumbnail' => 'Hlavní obrázek',
         'publication_state' => 'Stav publikace',
@@ -108,7 +114,7 @@ return [
     ],
 
     'validation' => [
-        'price_invalid' => 'Zadejte platné měsíční nájemné s nejvýše dvěma desetinnými místy',
+        'price_invalid' => 'Zadejte nezápornou cenu nebo její slovní popis (nejvýše 150 znaků)',
         'state_invalid' => 'Vyberte platný stav nabídky pronájmu',
         'url_invalid' => 'Zadejte platný odkaz HTTP nebo HTTPS',
         'date_invalid' => 'Zadejte platné datum dostupnosti',

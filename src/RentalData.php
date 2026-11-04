@@ -20,7 +20,7 @@ final readonly class RentalData
     public function __construct(
         #[CmsRoot('author_name')]
         public ?string $authorName,
-        #[CmsRoot('monthly_rent', decimalScale: 2)]
+        #[CmsRoot('monthly_rent')]
         public ?string $monthlyRent,
         #[CmsRoot('currency')]
         public string $currency,
@@ -45,16 +45,10 @@ final readonly class RentalData
         if ($author !== null && mb_strlen($author) > 255) {
             throw new DomainException('rental.validation.author_max_length');
         }
-        if (isset($data['monthly_rent']) && !is_string($data['monthly_rent']) && !is_int($data['monthly_rent'])) {
-            throw new DomainException('rental.validation.price_invalid');
-        }
         $price = self::nullableText($data['monthly_rent'] ?? null);
-        if ($price !== null) {
-            if (preg_match('/^(?:0|[1-9][0-9]{0,12})(?:\.[0-9]{1,2})?$/D', $price) !== 1) {
-                throw new DomainException('rental.validation.price_invalid');
-            }
-            [$whole, $fraction] = array_pad(explode('.', $price, 2), 2, '');
-            $price = $whole . '.' . str_pad($fraction, 2, '0');
+        if ($price !== null && (mb_strlen($price) > 150
+            || preg_match('/^[−-]\s*[0-9]|[\x00-\x1F\x7F]/u', $price) === 1)) {
+            throw new DomainException('rental.validation.price_invalid');
         }
         $state = (string) ($data['offer_state'] ?? 'preparing');
         if (!in_array($state, ['preparing', 'available', 'reserved', 'rented', 'cancelled'], true)) {

@@ -31,15 +31,21 @@ return [
 
     'fields' => [
         'location' => 'Location',
-        'monthly_rent' => 'Monthly rent (CZK)',
+        'location_help' => 'Where the offered property is located.',
+        'monthly_rent' => 'Monthly rent',
+        'monthly_rent_help' => 'A price or text shown with the listing.',
         'available_from' => 'Available from',
+        'available_from_help' => 'The date from which the property is available.',
         'offer_state' => 'Listing status',
+        'offer_state_help' => 'Current rental status. It does not affect publication.',
         'external_url' => 'External URL',
+        'external_url_help' => 'A link to more information or an external rental listing.',
         'title' => 'Listing title',
         'author_name' => 'Author',
         'tags' => 'Tags',
-        'tags_help' => 'Select an existing tag or enter a new one.',
+        'tags_help' => 'Used to label and filter rental listings. Select an existing tag or enter a new one.',
         'summary' => 'Summary',
+        'summary_help' => 'A short summary used in the public presentation.',
         'content' => 'Content',
         'thumbnail' => 'Thumbnail',
         'publication_state' => 'Publication status',
@@ -108,7 +114,7 @@ return [
     ],
 
     'validation' => [
-        'price_invalid' => 'Enter a valid monthly rent with no more than two decimal places',
+        'price_invalid' => 'Enter a non-negative rent or its description (up to 150 characters)',
         'state_invalid' => 'Select a valid listing status',
         'url_invalid' => 'Enter a valid HTTP or HTTPS URL',
         'date_invalid' => 'Enter a valid availability date',

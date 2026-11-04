@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lemonade\Cms\Rental\DataGrid;
 
+use DateTimeImmutable;
 use Lemonade\Admin\Action\Presentation\ModuleActionPresentationFactory;
 use Lemonade\Admin\Authorization\AuthorizationService;
 use Lemonade\Admin\Cms\Content\CmsContentDataGrid;
@@ -96,10 +97,10 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
                 new DataGridColumnDefinition('availableFrom', 'rental.fields.available_from', 'availableFrom'),
                 new DataGridColumnDefinition('offerState', 'rental.fields.offer_state', 'offerState'),
                 new DataGridColumnDefinition('state', 'rental.fields.publication_state', 'state'),
-                new DataGridColumnDefinition('publishedAt', 'rental.fields.published_at', 'publishedAt', 'd-none d-lg-table-cell', configurable: true),
-                new DataGridColumnDefinition('owner', 'rental.fields.owner', class: 'd-none d-xl-table-cell', configurable: true),
-                new DataGridColumnDefinition('createdAt', 'rental.fields.created_at', 'createdAt', configurable: true),
-                new DataGridColumnDefinition('updatedAt', 'rental.fields.updated_at', 'updatedAt', 'd-none d-xl-table-cell', configurable: true),
+                new DataGridColumnDefinition('publishedAt', 'rental.fields.published_at', 'publishedAt', 'd-none d-lg-table-cell', configurable: true, visibleByDefault: false),
+                new DataGridColumnDefinition('owner', 'rental.fields.owner', class: 'd-none d-xl-table-cell', configurable: true, visibleByDefault: false),
+                new DataGridColumnDefinition('createdAt', 'rental.fields.created_at', 'createdAt', configurable: true, visibleByDefault: false),
+                new DataGridColumnDefinition('updatedAt', 'rental.fields.updated_at', 'updatedAt', 'd-none d-xl-table-cell', configurable: true, visibleByDefault: false),
                 new DataGridColumnDefinition('deletedAt', 'rental.fields.deleted_at', configurable: true, visibleByDefault: false),
                 new DataGridColumnDefinition('actions', 'admin.common.actions'),
             ],
@@ -229,14 +230,17 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
                     url: $editable ? $this->editUrl($articleId, $locale) : null,
                 ),
                 'location' => new ScalarCell((string) ($article['location'] ?? '—')),
-                'monthlyRent' => new ScalarCell($article['monthly_rent'] === null ? '—' : (string) $article['monthly_rent'] . ' CZK'),
-                'availableFrom' => new ScalarCell((string) ($article['available_from'] ?? '—')),
-                'offerState' => new ScalarCell($this->translator->get('rental.states.' . $article['offer_state'])),
+                'monthlyRent' => new ScalarCell($article['monthly_rent'] === null ? '—' : (string) $article['monthly_rent']),
+                'availableFrom' => new ScalarCell($this->formatDate($article['available_from'] ?? null, false)),
+                'offerState' => new StatusCell(
+                    $this->translator->get('rental.states.' . $article['offer_state']),
+                    $article['offer_state'] === 'available' ? StatusVariant::Success : StatusVariant::Muted,
+                ),
                 'state' => new StatusCell(
                     $this->publicationStateLabel((int) $article['publication_state']),
                     (int) $article['publication_state'] === CmsPublicationState::Published->value ? StatusVariant::Success : StatusVariant::Muted,
                 ),
-                'publishedAt' => new ScalarCell((string) ($article['published_at'] ?? '—')),
+                'publishedAt' => new ScalarCell($this->formatDate($article['published_at'] ?? null)),
                 'owner' => new ScalarCell((string) ($article['owner_name'] ?? '—')),
                 'createdAt' => $this->auditMetadataCell($article['created_at'] ?? null, $article['created_by_name'] ?? null),
                 'updatedAt' => $this->auditMetadataCell($article['updated_at'] ?? null, $article['updated_by_name'] ?? null),
@@ -306,9 +310,30 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
         $actor = trim((string) $actor);
 
         return new StackedCell(
-            value: $date === '' ? '—' : $date,
+            value: $this->formatDate($date),
             secondary: $date === '' || $actor === '' ? '—' : $actor,
         );
+    }
+
+    /**
+     * Zobrazi datum podle jazyka administrace a bez sekund
+     */
+    private function formatDate(mixed $value, bool $withTime = true): string
+    {
+        $text = trim((string) $value);
+        if ($text === '') {
+            return '—';
+        }
+
+        $date = DateTimeImmutable::createFromFormat($withTime ? '!Y-m-d H:i:s' : '!Y-m-d', $text);
+        if ($date === false) {
+            return $text;
+        }
+
+        return $date->format(match ($this->translator->locale()) {
+            'en' => $withTime ? 'M j, Y H:i' : 'M j, Y',
+            default => $withTime ? 'd. m. Y H:i' : 'd. m. Y',
+        });
     }
 
     /**

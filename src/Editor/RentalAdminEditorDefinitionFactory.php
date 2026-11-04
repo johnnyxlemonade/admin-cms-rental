@@ -127,16 +127,34 @@ final readonly class RentalAdminEditorDefinitionFactory
                                 md: 12,
                             ),
                             new FieldColumn(
-                                Field::text('location', labelKey: 'rental.fields.location')->attributes(['maxlength' => '255']),
+                                Field::text('author_name', labelKey: 'rental.fields.author_name')
+                                    ->attributes(['maxlength' => '255']),
                                 md: 12,
                             ),
                             new FieldColumn(
-                                Field::number('monthly_rent', labelKey: 'rental.fields.monthly_rent')->attributes(['min' => '0', 'step' => '0.01']),
+                                Field::text('location', labelKey: 'rental.fields.location')
+                                    ->help('', 'rental.fields.location_help')
+                                    ->attributes(['maxlength' => '255']),
                                 md: 6,
                             ),
                             new FieldColumn(
-                                Field::text('available_from', labelKey: 'rental.fields.available_from')->attributes(['placeholder' => 'YYYY-MM-DD']),
+                                Field::text('external_url', labelKey: 'rental.fields.external_url')
+                                    ->help('', 'rental.fields.external_url_help')
+                                    ->attributes(['maxlength' => '2048']),
                                 md: 6,
+                            ),
+                            new FieldColumn(
+                                Field::text('monthly_rent', labelKey: 'rental.fields.monthly_rent')
+                                    ->help('', 'rental.fields.monthly_rent_help')
+                                    ->attributes(['maxlength' => '150']),
+                                md: 6,
+                                lg: 4,
+                            ),
+                            new FieldColumn(
+                                Field::date('available_from', labelKey: 'rental.fields.available_from')
+                                    ->help('', 'rental.fields.available_from_help'),
+                                md: 6,
+                                lg: 4,
                             ),
                             new FieldColumn(
                                 Field::select('offer_state', labelKey: 'rental.fields.offer_state')
@@ -148,16 +166,15 @@ final readonly class RentalAdminEditorDefinitionFactory
                                         'cancelled' => 'rental.states.cancelled',
                                     ])
                                     ->options(['preparing' => '', 'available' => '', 'reserved' => '', 'rented' => '', 'cancelled' => ''])
-                                    ->defaultValue('preparing'),
+                                    ->defaultValue('preparing')
+                                    ->help('', 'rental.fields.offer_state_help'),
                                 md: 6,
-                            ),
-                            new FieldColumn(
-                                Field::text('external_url', labelKey: 'rental.fields.external_url')->attributes(['maxlength' => '2048']),
-                                md: 12,
+                                lg: 4,
                             ),
                             CmsTagsField::column('rental', $tagOptions, $translation['tags'] ?? []),
                             new FieldColumn(
-                                Field::textarea('summary', labelKey: 'rental.fields.summary'),
+                                Field::textarea('summary', labelKey: 'rental.fields.summary')
+                                    ->help('', 'rental.fields.summary_help'),
                                 md: 12,
                             ),
                         ]),
@@ -198,17 +215,6 @@ final readonly class RentalAdminEditorDefinitionFactory
             label: '',
             blocks: [
                 ...CmsDisplaySettings::tab()->blocks(),
-                new SectionBlock(
-                    id: 'authorship',
-                    blocks: [new FieldGroupBlock([
-                        new FieldColumn(
-                            Field::text('author_name', labelKey: 'rental.fields.author_name')->attributes(['maxlength' => '255']),
-                            md: 12,
-                        ),
-                    ])],
-                    title: '',
-                    titleKey: 'rental.editor.ownership',
-                ),
             ],
             labelKey: 'rental.editor.tabs.settings',
         );

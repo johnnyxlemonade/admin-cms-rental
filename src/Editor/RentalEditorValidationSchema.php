@@ -49,6 +49,7 @@ final readonly class RentalEditorValidationSchema
             ->field('published_at', $this->translator->get('rental.fields.published_at'))
             ->field('location', $this->translator->get('rental.fields.location'))
             ->field('monthly_rent', $this->translator->get('rental.fields.monthly_rent'))
+                ->maxLength(150, $this->translator->get('rental.validation.price_invalid'))
             ->field('available_from', $this->translator->get('rental.fields.available_from'))
             ->field('offer_state', $this->translator->get('rental.fields.offer_state'))
             ->field('external_url', $this->translator->get('rental.fields.external_url'))

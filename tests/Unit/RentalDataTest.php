@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
  */
 final class RentalDataTest extends TestCase
 {
-    public function testMapsDecimalAndLocalizedLocation(): void
+    public function testMapsTextRentAndLocalizedLocation(): void
     {
         $data = RentalData::fromEditor([
-            'monthly_rent' => '1234567890123.5',
+            'monthly_rent' => ' 13 000 Kč ',
             'available_from' => '2028-02-29',
             'offer_state' => 'available',
             'external_url' => 'https://example.com/rental',
@@ -26,7 +26,7 @@ final class RentalDataTest extends TestCase
         self::assertSame([
             'root' => [
                 'author_name' => null,
-                'monthly_rent' => '1234567890123.50',
+                'monthly_rent' => '13 000 Kč',
                 'currency' => 'CZK',
                 'available_from' => '2028-02-29',
                 'offer_state' => 'available',
@@ -52,11 +52,10 @@ final class RentalDataTest extends TestCase
      */
     public static function invalidValues(): iterable
     {
-        yield 'float' => [['monthly_rent' => 1.23], 'rental.validation.price_invalid'];
-        yield 'overflow' => [['monthly_rent' => '10000000000000.00'], 'rental.validation.price_invalid'];
+        yield 'too long' => [['monthly_rent' => str_repeat('x', 151)], 'rental.validation.price_invalid'];
         yield 'negative' => [['monthly_rent' => '-1'], 'rental.validation.price_invalid'];
+        yield 'control character' => [['monthly_rent' => "Cena\nnově"], 'rental.validation.price_invalid'];
         yield 'date range' => [['available_from' => '0000-01-01'], 'rental.validation.date_invalid'];
-        yield 'price' => [['monthly_rent' => '1.001'], 'rental.validation.price_invalid'];
         yield 'date' => [['available_from' => '2026-02-30'], 'rental.validation.date_invalid'];
         yield 'state' => [['offer_state' => 'published'], 'rental.validation.state_invalid'];
         yield 'url' => [['external_url' => 'javascript:alert(1)'], 'rental.validation.url_invalid'];

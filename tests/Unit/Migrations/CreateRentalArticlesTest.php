@@ -46,7 +46,7 @@ final class CreateRentalArticlesTest extends TestCase
             array_keys($statements),
         );
         $root = $statements['cms_rental'];
-        self::assertStringContainsString('`monthly_rent` DECIMAL(15,2) NULL', $root);
+        self::assertStringContainsString('`monthly_rent` TEXT NULL', $root);
         self::assertStringContainsString('`available_from` DATE NULL', $root);
         self::assertStringContainsString('`offer_state`', $root);
         self::assertStringContainsString('`location`', $statements['cms_rental_translation']);

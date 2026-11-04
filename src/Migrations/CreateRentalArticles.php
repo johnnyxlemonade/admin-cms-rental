@@ -29,7 +29,7 @@ final readonly class CreateRentalArticles implements MigrationInterface
     {
         $schema->create('cms_rental', static function (TableBlueprint $table): void {
             CmsContentSchema::root($table, 'cms_rental');
-            $table->decimal('monthly_rent', 15, 2)->nullable();
+            $table->text('monthly_rent')->nullable();
             $table->string('currency', 3)->default('CZK');
             $table->date('available_from')->nullable();
             $table->string('offer_state', 32)->default('preparing');
