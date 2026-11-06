@@ -70,7 +70,7 @@ final readonly class ModuleManifest implements
         return new AdminModuleMetadata(
             nameKey: 'rental.module.name',
             icon: AdminIcon::Building,
-            navigationGroup: AdminNavigationGroup::Content,
+            navigationGroup: AdminNavigationGroup::Cms,
             navigationOrder: 10,
             routeSegment: 'rental',
             navigationPermission: 'cms.rental.view_own',

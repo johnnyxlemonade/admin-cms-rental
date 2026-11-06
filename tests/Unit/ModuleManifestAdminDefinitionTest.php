@@ -27,7 +27,7 @@ final class ModuleManifestAdminDefinitionTest extends TestCase
         $definition = new ModuleManifest();
 
         self::assertSame('cms.rental', $definition->code());
-        self::assertSame(AdminNavigationGroup::Content, $definition->adminMetadata()->navigationGroup);
+        self::assertSame(AdminNavigationGroup::Cms, $definition->adminMetadata()->navigationGroup());
         self::assertSame('rental', $definition->adminMetadata()->routeSegment());
         self::assertSame('rental.module.description', $definition->adminMetadata()->descriptionKey());
         self::assertSame('cms.rental.view_own', $definition->adminMetadata()->navigationPermission());
@@ -115,12 +115,12 @@ final class ModuleManifestAdminDefinitionTest extends TestCase
             order: $metadata->navigationOrder(),
             label: $metadata->nameKey(),
             labelKey: $metadata->nameKey(),
-            route: 'admin.content.module.index',
+            route: 'admin.cms.module.index',
             routeParameters: ['module' => $metadata->routeSegment()],
             routePrefix: false,
             icon: $metadata->icon(),
             moduleCode: $definition->code(),
-            moduleNavigationGroup: $metadata->navigationGroup,
+            moduleNavigationGroup: $metadata->navigationGroup(),
             moduleRouteSegment: $metadata->routeSegment(),
         );
 

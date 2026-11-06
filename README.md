@@ -7,8 +7,8 @@
 
 `johnnyxlemonade/admin-cms-rental` is an optional CMS module with the
 `cms.rental` code. When present in the Composer installation, it provides
-rental management at `<admin-base>/content/rental` (for the standard `/admin`
-base path, `/admin/content/rental`).
+rental management at `<admin-base>/cms/rental` (for the standard `/admin`
+base path, `/admin/cms/rental`).
 
 A rental root stores its author name, owner, monthly rent in CZK, availability
 date, offer state, external URL, and shared display settings. The author name
