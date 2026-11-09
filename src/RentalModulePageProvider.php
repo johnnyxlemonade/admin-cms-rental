@@ -157,6 +157,7 @@ final readonly class RentalModulePageProvider implements ModuleIndexPageProvider
         $ownerId = $article['owner_id'] === null ? null : (int) $article['owner_id'];
         $canAssignOwner = $this->authorization->hasPermission('cms.rental.assign_owner')
             && $this->authorization->canForOwner('cms.rental.view', 'cms.rental.view_own', $ownerId);
+        $canEdit = $this->authorization->canForOwner('cms.rental.edit', 'cms.rental.edit_own', $ownerId);
 
         return new ModulePage(
             view: 'admin::editor',
@@ -179,10 +180,11 @@ final readonly class RentalModulePageProvider implements ModuleIndexPageProvider
                         usage: 'thumbnail',
                         labelKey: 'rental.fields.thumbnail',
                         helpKey: 'rental.editor.thumbnail.help',
+                        editable: $canEdit,
                         alt: (string) ($article['translations'][0]['title'] ?? ''),
                     ),
-                    galleryUpload: $this->files->collection('cms.rental', (int) $article['id'], 'gallery', 'admin.file_upload.gallery', 'admin.file_upload.gallery_help'),
-                    attachmentUpload: $this->files->collection('cms.rental', (int) $article['id'], 'attachment', 'admin.file_upload.attachments', 'admin.file_upload.attachments_help'),
+                    galleryUpload: $this->files->collection('cms.rental', (int) $article['id'], 'gallery', 'admin.file_upload.gallery', 'admin.file_upload.gallery_help', editable: $canEdit),
+                    attachmentUpload: $this->files->collection('cms.rental', (int) $article['id'], 'attachment', 'admin.file_upload.attachments', 'admin.file_upload.attachments_help', editable: $canEdit),
                     tagOptions: $this->rental->tagNamesForLocale($selected['code']),
                 ),
                 'adminEditorContext' => new AdminEditorRenderContext(
