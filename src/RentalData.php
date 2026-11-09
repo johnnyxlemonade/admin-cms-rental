@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Lemonade\Cms\Rental;
 
-use DateTimeImmutable;
-use DomainException;
+use Lemonade\Cms\Content\CmsContentValidation;
 use Lemonade\Cms\Content\CmsLocalized;
 use Lemonade\Cms\Content\CmsRoot;
 
@@ -41,35 +40,35 @@ final readonly class RentalData
      */
     public static function fromEditor(array $data): self
     {
-        $author = self::nullableText($data['author_name'] ?? null);
+        $data = CmsContentValidation::texts($data, ['author_name', 'monthly_rent', 'available_from', 'offer_state', 'external_url', 'location']);
+        $errors = [];
+        $author = $data['author_name'];
         if ($author !== null && mb_strlen($author) > 255) {
-            throw new DomainException('rental.validation.author_max_length');
+            $errors['author_name'] = 'rental.validation.author_max_length';
         }
-        $price = self::nullableText($data['monthly_rent'] ?? null);
+        $price = $data['monthly_rent'];
         if ($price !== null && (mb_strlen($price) > 150
             || preg_match('/^[−-]\s*[0-9]|[\x00-\x1F\x7F]/u', $price) === 1)) {
-            throw new DomainException('rental.validation.price_invalid');
+            $errors['monthly_rent'] = 'rental.validation.price_invalid';
         }
         $state = (string) ($data['offer_state'] ?? 'preparing');
         if (!in_array($state, ['preparing', 'available', 'reserved', 'rented', 'cancelled'], true)) {
-            throw new DomainException('rental.validation.state_invalid');
+            $errors['offer_state'] = 'rental.validation.state_invalid';
         }
-        $url = self::nullableText($data['external_url'] ?? null);
+        $url = $data['external_url'];
         if ($url !== null && (mb_strlen($url) > 2048 || filter_var($url, FILTER_VALIDATE_URL) === false || !in_array(strtolower((string) parse_url($url, PHP_URL_SCHEME)), ['http', 'https'], true))) {
-            throw new DomainException('rental.validation.url_invalid');
+            $errors['external_url'] = 'rental.validation.url_invalid';
         }
-        $availableFrom = self::nullableText($data['available_from'] ?? null);
-        if ($availableFrom !== null) {
-            $date = DateTimeImmutable::createFromFormat('!Y-m-d', $availableFrom);
-            if ($date === false || $date->format('Y-m-d') !== $availableFrom || (int) substr($availableFrom, 0, 4) < 1000) {
-                throw new DomainException('rental.validation.date_invalid');
-            }
-            $availableFrom = $date->format('Y-m-d');
+        $availableFrom = $data['available_from'];
+        if ($availableFrom !== null && !CmsContentValidation::validDate($availableFrom, false)) {
+            $errors['available_from'] = 'rental.validation.date_invalid';
         }
-        $location = self::nullableText($data['location'] ?? null);
+        $location = $data['location'];
         if ($location !== null && mb_strlen($location) > 255) {
-            throw new DomainException('rental.validation.location_invalid');
+            $errors['location'] = 'rental.validation.location_invalid';
         }
+
+        CmsContentValidation::assert($errors);
 
         return new self(
             authorName: $author,
@@ -80,15 +79,5 @@ final readonly class RentalData
             externalUrl: $url,
             location: $location,
         );
-    }
-
-    /**
-     * Prevede prazdny volitelny text na null
-     */
-    private static function nullableText(mixed $value): ?string
-    {
-        $text = trim((string) $value);
-
-        return $text === '' ? null : $text;
     }
 }

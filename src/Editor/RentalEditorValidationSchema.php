@@ -36,7 +36,6 @@ final readonly class RentalEditorValidationSchema
             ->field('locale', $this->translator->get('rental.editor.content'))
                 ->required($this->translator->get('rental.validation.locale_required'))
             ->field('title', $this->translator->get('rental.fields.title'))
-                ->required($this->translator->get('rental.validation.title_required'))
                 ->maxLength(180, $this->translator->get('rental.validation.title_max_length'))
             ->field('author_name', $this->translator->get('rental.fields.author_name'))
                 ->maxLength(255, $this->translator->get('rental.validation.author_max_length'))

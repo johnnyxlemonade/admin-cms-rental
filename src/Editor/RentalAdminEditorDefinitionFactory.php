@@ -66,7 +66,7 @@ final readonly class RentalAdminEditorDefinitionFactory
             ->header(CmsEditorHeader::create('rental', $indexUrl, $context))
             ->saveBar(CmsEditorSaveBar::create());
         $builder
-            ->tab($this->contentTab($translation, $contentLocale, $tagOptions))
+            ->tab($this->contentTab($translation, $contentLocale, $tagOptions, $canPublish))
             ->tab(SeoSection::tab(pathPrefix: '/', autoGenerateUrl: trim((string) ($translation['canonical_path'] ?? '')) === ''))
             ->tab($this->settingsTab())
             ->tab(CmsMediaSection::gallery('rental', $galleryUpload))
@@ -109,7 +109,7 @@ final readonly class RentalAdminEditorDefinitionFactory
      * @param array<string,mixed> $translation
      * @param list<string> $tagOptions
      */
-    private function contentTab(array $translation, string $contentLocale, array $tagOptions): AdminEditorTab
+    private function contentTab(array $translation, string $contentLocale, array $tagOptions, bool $canPublish): AdminEditorTab
     {
         return new AdminEditorTab(
             id: 'content',
@@ -123,7 +123,7 @@ final readonly class RentalAdminEditorDefinitionFactory
                             new FieldColumn(
                                 Field::text('title', labelKey: 'rental.fields.title')
                                     ->required()
-                                    ->attributes(['maxlength' => '180']),
+                                    ->attributes(['maxlength' => '180'] + CmsPublicationSection::requiredAttributes((int) ($translation['publication_state'] ?? 0), $canPublish)),
                                 md: 12,
                             ),
                             new FieldColumn(

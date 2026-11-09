@@ -37,6 +37,39 @@ final class RentalDataTest extends TestCase
     }
 
     /**
+     * Nepovinna cena zustava textova a rozpracovana data mohou byt prazdna
+     */
+    public function testOptionalTextPriceAndEmptyDomainValuesRemainValid(): void
+    {
+        foreach (['', '400 000 Kč', 'Cena na vyžádání'] as $price) {
+            $data = RentalData::fromEditor(['monthly_rent' => $price, 'available_from' => '', 'offer_state' => '', 'location' => '', 'external_url' => '']);
+            $values = (new CmsDomainMapping(RentalData::class))->values($data);
+            self::assertSame($price === '' ? null : $price, $values['root']['monthly_rent']);
+        }
+    }
+
+    /**
+     * Vice domenovych chyb zachova vlastni nazvy poli
+     */
+    public function testDomainErrorsAreCollectedByField(): void
+    {
+        try {
+            RentalData::fromEditor(['monthly_rent' => '-1', 'available_from' => 'invalid', 'external_url' => 'javascript:alert(1)', 'offer_state' => 'unknown']);
+            self::fail('Invalid domain accepted');
+        } catch (\Lemonade\Cms\Content\CmsContentValidationException $exception) {
+            foreach (['monthly_rent', 'available_from', 'external_url', 'offer_state'] as $field) {
+                self::assertArrayHasKey($field, $exception->errors());
+            }
+        }
+        try {
+            RentalData::fromEditor(['location' => ['nested'], 'external_url' => new \stdClass()]);
+            self::fail('Structured domain accepted');
+        } catch (\Lemonade\Cms\Content\CmsContentValidationException $exception) {
+            self::assertSame(['external_url', 'location'], array_keys($exception->errors()));
+        }
+    }
+
+    /**
      * @dataProvider invalidValues
      * @param array<string,mixed> $data
      */
