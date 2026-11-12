@@ -218,8 +218,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
                             shape: 'rounded',
                         )
                         : $this->thumbnails->image(
-                            module: 'cms.rental',
-                            imageId: (string) $featuredImage['id'],
+                            fileId: (int) $featuredImage['id'],
                             alt: $displayTitle,
                             fallback: null,
                             size: 'compact',
