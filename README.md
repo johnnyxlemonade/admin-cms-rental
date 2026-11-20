@@ -1,9 +1,9 @@
 # Lemonade CMS Rental
 
-[![PHPStan](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/phpstan.yml/badge.svg)](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/phpstan.yml)
-[![Tests](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/phpunit.yml/badge.svg)](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/phpunit.yml)
-[![Coding Standards](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/coding-standards.yml)
-[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](composer.json)
+[![Tests](https://img.shields.io/github/actions/workflow/status/johnnyxlemonade/admin-cms-rental/phpunit.yml?branch=main&label=Tests&logo=githubactions&logoColor=white&labelColor=0f766e)](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/phpunit.yml)
+[![PHP 8.3–8.6](https://img.shields.io/badge/PHP-8.3%20%7C%208.4%20%7C%208.5%20%7C%208.6-777BB4?logo=php&logoColor=white)](#requirements)
+[![PHPStan](https://img.shields.io/github/actions/workflow/status/johnnyxlemonade/admin-cms-rental/phpstan.yml?branch=main&label=PHPStan&logo=php&logoColor=white&labelColor=5b4baf)](https://github.com/johnnyxlemonade/admin-cms-rental/actions/workflows/phpstan.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
 `johnnyxlemonade/admin-cms-rental` is an optional CMS module with the
 `cms.rental` code. When present in the Composer installation, it provides
@@ -24,10 +24,14 @@ and attachments use Admin Platform file collections. The package does not
 provide public routes, templates, or rental rendering; the host application
 decides how to use the stored display metadata.
 
-## Installation
+## Requirements
 
-The package requires PHP `>=8.3 <8.6`, `johnnyxlemonade/framework`,
-`johnnyxlemonade/admin-platform`, and `johnnyxlemonade/cms-core`.
+- PHP 8.3 or newer, tested on PHP 8.3, 8.4, 8.5 and 8.6.
+- `johnnyxlemonade/framework:dev-main`.
+- `johnnyxlemonade/admin-platform:dev-main`.
+- `johnnyxlemonade/cms-core:dev-main`.
+
+## Installation
 
 ```bash
 composer require johnnyxlemonade/admin-cms-rental:dev-main

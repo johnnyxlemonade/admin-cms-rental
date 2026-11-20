@@ -62,7 +62,7 @@ final class RentalEditorValidationSchemaTest extends TestCase
      */
     private function schema(): RentalEditorValidationSchema
     {
-        $translator = $this->createMock(TranslatorInterface::class);
+        $translator = self::createStub(TranslatorInterface::class);
         $translator->method('get')->willReturnCallback(static fn(string $key): string => $key);
 
         return new RentalEditorValidationSchema($translator);
