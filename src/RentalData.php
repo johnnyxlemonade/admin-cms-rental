@@ -9,32 +9,88 @@ use Lemonade\Cms\Content\CmsLocalized;
 use Lemonade\Cms\Content\CmsRoot;
 
 /**
- * Predstavuje globalni a lokalizovane domenove udaje pronajmu
+ * Represents root and localized domain data of one rental
  */
 final readonly class RentalData
 {
     /**
-     * Nastavuje autora, cenu, termin, stav, odkaz a lokalitu
+     * Creates the rental data stored by the shared CMS lifecycle
      */
     public function __construct(
         #[CmsRoot('author_name')]
-        public ?string $authorName,
+        private ?string $authorName,
         #[CmsRoot('monthly_rent')]
-        public ?string $monthlyRent,
+        private ?string $monthlyRent,
         #[CmsRoot('currency')]
-        public string $currency,
+        private string $currency,
         #[CmsRoot('available_from')]
-        public ?string $availableFrom,
+        private ?string $availableFrom,
         #[CmsRoot('offer_state')]
-        public string $offerState,
+        private string $offerState,
         #[CmsRoot('external_url')]
-        public ?string $externalUrl,
+        private ?string $externalUrl,
         #[CmsLocalized('location')]
-        public ?string $location,
+        private ?string $location,
     ) {}
 
     /**
-     * Validuje a normalizuje domenove hodnoty editoru
+     * Returns the optional author name
+     */
+    public function getAuthorName(): ?string
+    {
+        return $this->authorName;
+    }
+
+    /**
+     * Returns the stored monthly rent text
+     */
+    public function getMonthlyRent(): ?string
+    {
+        return $this->monthlyRent;
+    }
+
+    /**
+     * Returns the stored currency code
+     */
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Returns the optional availability date
+     */
+    public function getAvailableFrom(): ?string
+    {
+        return $this->availableFrom;
+    }
+
+    /**
+     * Returns the offer state independently of CMS publication
+     */
+    public function getOfferState(): string
+    {
+        return $this->offerState;
+    }
+
+    /**
+     * Returns the optional external rental URL
+     */
+    public function getExternalUrl(): ?string
+    {
+        return $this->externalUrl;
+    }
+
+    /**
+     * Returns the localized rental location
+     */
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    /**
+     * Validates and normalizes domain values submitted by the editor
      *
      * @param array<string,mixed> $data
      */

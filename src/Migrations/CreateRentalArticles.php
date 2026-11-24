@@ -10,12 +10,12 @@ use Lemonade\Framework\Database\Schema\Blueprint\TableBlueprint;
 use Lemonade\Framework\Database\Schema\Schema;
 
 /**
- * Vytvari oddelene tabulky pronajmu a jejich lokalizovanych mutaci
+ * Creates Rental article roots and their localized translations
  */
 final readonly class CreateRentalArticles implements MigrationInterface
 {
     /**
-     * Vrati stabilni identifikator migrace pronajmu
+     * Returns the stable Rental migration identifier
      */
     public static function identifier(): string
     {
@@ -23,7 +23,7 @@ final readonly class CreateRentalArticles implements MigrationInterface
     }
 
     /**
-     * Vytvori spolecne CMS sloupce a domenove udaje pronajmu
+     * Creates Rental tables using the shared CMS content schema
      */
     public function up(Schema $schema): void
     {

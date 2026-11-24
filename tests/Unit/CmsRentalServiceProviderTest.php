@@ -10,6 +10,7 @@ use Lemonade\Admin\Editor\EditorRegistry;
 use Lemonade\Admin\Localization\ClientTranslationGroupRegistry;
 use Lemonade\Admin\Page\ModulePageRegistry;
 use Lemonade\Cms\Rental\CmsRentalServiceProvider;
+use Lemonade\Cms\Rental\Public\PublishedRentalReadModel;
 use Lemonade\Framework\Container\Container;
 use Lemonade\Framework\Container\ContainerInterface;
 use Lemonade\Framework\Localization\TranslationResourceRegistry;
@@ -66,6 +67,7 @@ final class CmsRentalServiceProviderTest extends TestCase
         (new CmsRentalServiceProvider())->register($container);
 
         self::assertTrue($container->isBound('admin.cms.rental.action.create'));
+        self::assertTrue($container->isBound(PublishedRentalReadModel::class));
         self::assertSame([], iterator_to_array($container->tagged(RouteRegistrarInterface::class)));
     }
 }

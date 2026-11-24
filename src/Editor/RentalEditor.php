@@ -29,7 +29,7 @@ use Lemonade\Framework\Routing\UrlGenerator;
 use Lemonade\Framework\Validation\ValidationSchema;
 
 /**
- * Propojuje Rental full-page editor s canonical lifecycle a mutacemi obsahu
+ * Connects the Rental editor to the shared content lifecycle
  */
 final readonly class RentalEditor implements
     EditorProviderInterface,
@@ -37,7 +37,7 @@ final readonly class RentalEditor implements
     EditorFieldAccessPolicyInterface
 {
     /**
-     * Nastavuje Rental persistence, mutation service, preklady a auditni identitu editoru
+     * Receives Rental persistence, lifecycle, routing and authorization services
      *
      * @param CmsContentLifecycle<RentalData> $service
      */
@@ -54,7 +54,7 @@ final readonly class RentalEditor implements
     ) {}
 
     /**
-     * Deklaruje transportni pole editoru vcetne dynamic translations payloadu
+     * Defines the transport fields accepted by the Rental editor
      */
     public function editorDefinition(): EditorDefinition
     {
@@ -84,7 +84,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Overi globalni nebo vlastnicky pristup ke cteni clanku
+     * Checks global or owner-scoped access to an article
      */
     public function loadAccessDecision(int $id): bool
     {
@@ -96,7 +96,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Overi globalni nebo vlastnicky pristup k beznemu ulozeni clanku
+     * Checks global or owner-scoped access to edit an article
      */
     public function saveAccessDecision(int $id): bool
     {
@@ -108,7 +108,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Overi publish pole proti aktualnimu vlastnikovi root aggregate
+     * Checks publication fields against the current article owner
      */
     public function fieldAccessDecision(int $id, string $field): ?bool
     {
@@ -124,7 +124,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Nacte existujici Rental aggregate pro editaci
+     * Loads an existing Rental article for editing
      */
     public function updateData(int $id): array
     {
@@ -137,7 +137,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Vrati prazdny editorovy stav pro nepouzitou fallback create route
+     * Returns the empty editor state required by the shared create contract
      */
     public function createData(): array
     {
@@ -155,15 +155,15 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Vrati prazdnou validaci pro okamzite zalozeni draftu bez vstupu uzivatele
+     * Returns validation for creating a draft without form input
      */
     public function createValidationSchema(): ValidationSchema
     {
-        return ValidationSchema::create();
+        return $this->validation->forCreate();
     }
 
     /**
-     * Vrati validaci pro zmenu globalnich dat a aktualni content mutation
+     * Returns validation for a localized update and root metadata
      */
     public function updateValidationSchema(int $id): ValidationSchema
     {
@@ -171,7 +171,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Ulozi predane neprazdne mutation a lifecycle clanku
+     * Saves a localized article mutation through the shared lifecycle
      */
     public function update(int $id, array $data): EditorSaveResult
     {
@@ -182,7 +182,7 @@ final readonly class RentalEditor implements
             throw new EditorValidationException(
                 $exception->getMessage(),
                 previous: $exception,
-                errors: array_map($this->translator->get(...), $exception->errors()),
+                errors: array_map($this->translator->get(...), $exception->getErrors()),
             );
         } catch (DomainException $exception) {
             throw new EditorValidationException($exception->getMessage(), previous: $exception);
@@ -201,7 +201,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Zalozi minimalni draft v canonical vychozim content locale
+     * Creates a minimal draft in the configured default content locale
      */
     public function create(array $data): EditorSaveResult
     {
@@ -213,7 +213,7 @@ final readonly class RentalEditor implements
             throw new EditorValidationException(
                 $exception->getMessage(),
                 previous: $exception,
-                errors: array_map($this->translator->get(...), $exception->errors()),
+                errors: array_map($this->translator->get(...), $exception->getErrors()),
             );
         } catch (DomainException $exception) {
             throw new EditorValidationException($exception->getMessage(), previous: $exception);
@@ -229,7 +229,7 @@ final readonly class RentalEditor implements
     }
 
     /**
-     * Vytvori canonical edit URL se zachovanym content locale
+     * Builds the canonical Admin edit URL for the content locale
      */
     private function editUrl(int $articleId, string $locale): string
     {

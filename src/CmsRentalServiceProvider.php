@@ -17,6 +17,7 @@ use Lemonade\Cms\Content\Models\CmsContentModel;
 use Lemonade\Cms\Rental\DataGrid\RentalDataGrid;
 use Lemonade\Cms\Rental\Editor\RentalEditor;
 use Lemonade\Cms\Rental\Editor\RentalEditorValidationSchema;
+use Lemonade\Cms\Rental\Public\PublishedRentalReadModel;
 use Lemonade\Cms\Routing\Cms\CmsRouteReservationService;
 use Lemonade\Framework\Container\ContainerBuilderInterface;
 use Lemonade\Framework\Container\ContainerInterface;
@@ -28,15 +29,16 @@ use Lemonade\Framework\Routing\UrlGenerator;
 use Lemonade\Framework\Support\Slug\Slugger;
 
 /**
- * Pripojuje modul k existujicimu sdilenemu CMS Admin transportu
+ * Connects Rental to the shared CMS Admin transport and public reader
  */
 final readonly class CmsRentalServiceProvider implements ServiceProviderInterface, BootableServiceProviderInterface
 {
     /**
-     * Registruje editorove action transporty modulu
+     * Registers Rental services before the container is frozen
      */
     public function register(ContainerBuilderInterface $container): void
     {
+        $container->scoped(PublishedRentalReadModel::class, PublishedRentalReadModel::class);
         $container->scoped('cms.rental.definition', static fn(): CmsContentDefinition => self::contentDefinition());
         $container->scoped('cms.rental.content_model', static fn(ContainerInterface $container): CmsContentModel => new CmsContentModel(
             $container->get(Database::class),
@@ -65,7 +67,7 @@ final readonly class CmsRentalServiceProvider implements ServiceProviderInterfac
     }
 
     /**
-     * Vrati registrovane tabulky a atributove mapovani obsahu
+     * Returns the Rental table and domain mapping definition
      */
     public static function contentDefinition(): CmsContentDefinition
     {
@@ -83,7 +85,7 @@ final readonly class CmsRentalServiceProvider implements ServiceProviderInterfac
     }
 
     /**
-     * Pripoji preklady, grid, editor, stranky a akce modulu
+     * Connects Rental resources and Admin contributions after registration
      */
     public function boot(ContainerInterface $container): void
     {
@@ -91,7 +93,7 @@ final readonly class CmsRentalServiceProvider implements ServiceProviderInterfac
     }
 
     /**
-     * Nastavi stavajici presentation a action providery modulu
+     * Creates the shared CMS Admin provider for Rental
      */
     public static function adminProvider(): CmsContentAdminProvider
     {

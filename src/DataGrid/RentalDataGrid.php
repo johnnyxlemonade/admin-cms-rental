@@ -37,12 +37,12 @@ use Lemonade\Framework\Localization\TranslatorInterface;
 use Lemonade\Framework\Routing\UrlGenerator;
 
 /**
- * Promita Rental clanky do shared Admin DataGridu bez translation N+1 dotazu
+ * Projects Rental articles into the shared Admin DataGrid without per-row queries
  */
 final readonly class RentalDataGrid implements DataGridProviderInterface
 {
     /**
-     * Nastavuje Rental persistence projekci pro DataGrid
+     * Receives Rental queries, authorization and grid presentation services
      */
     public function __construct(
         private CmsContentReadModel $rental,
@@ -58,7 +58,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     ) {}
 
     /**
-     * Deklaruje pouze domenove rozsireni standardniho CMS dotazu
+     * Defines rental columns and the business-state filter for the shared grid
      */
     public static function queryDefinition(): CmsDataGridDefinition
     {
@@ -76,7 +76,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Vrati pravo potrebne pro nacteni Rental prehledu
+     * Returns the permission required to read the Rental grid
      */
     public function permission(): string
     {
@@ -84,7 +84,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Deklaruje sloupce, search, filtry a deterministic razeni prehledu
+     * Defines columns, filters and deterministic sorting for Rental
      */
     public function dataGridDefinition(): DataGridDefinition
     {
@@ -139,7 +139,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Vrati typed radky z jedine batch projekce Rental modelu
+     * Returns typed rows from a batched Rental projection
      */
     public function execute(DataGridQuery $query): DataGridResult
     {
@@ -171,7 +171,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Promita jeden clanek na odkazovatelny aktivni nebo read-only smazany radek
+     * Projects one article into an active or deleted grid row
      *
      * @param array<string,mixed> $article
      * @param array{
@@ -250,7 +250,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Vrati lokalizovany label publication stavu z databazove hodnoty
+     * Returns the localized label for a stored publication state
      */
     private function publicationStateLabel(int $value): string
     {
@@ -264,7 +264,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Nabizi editaci pouze jako neautoritativni presentation akci
+     * Offers row actions as presentation after authorization checks
      *
      * @return list<DataGridRowActionDefinition>
      */
@@ -301,7 +301,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Zobrazi auditni datum nad identitou uzivatele
+     * Stacks an audit date above the actor name
      */
     private function auditMetadataCell(mixed $date, mixed $actor): StackedCell
     {
@@ -315,7 +315,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Zobrazi datum podle jazyka administrace a bez sekund
+     * Formats the date for the Admin locale without seconds
      */
     private function formatDate(mixed $value, bool $withTime = true): string
     {
@@ -336,7 +336,7 @@ final readonly class RentalDataGrid implements DataGridProviderInterface
     }
 
     /**
-     * Sklada canonical URL editoru s explicitni content locale mutace
+     * Builds the Admin editor URL for a selected content locale
      */
     private function editUrl(int $articleId, ?string $contentLocale = null): string
     {
